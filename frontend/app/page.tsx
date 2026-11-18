@@ -18,6 +18,8 @@ export default function Home() {
   async function upload(e: FormEvent) {
     e.preventDefault();
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { setError('File must be 5 MB or smaller.'); return; }
+    setDocument(null);
     setLoading(true); setError(''); setAnswer(''); setSources([]);
     try {
       const body = new FormData(); body.append('file', file);
@@ -51,7 +53,7 @@ export default function Home() {
     <p className="intro">Upload a PDF or TXT file, then ask questions. The assistant searches embedded chunks stored in PostgreSQL with pgvector and cites the most relevant passages.</p>
     <section className="panel"><h2>1. Upload document</h2>
       <form onSubmit={upload}>
-        <input aria-label="Choose PDF or TXT file" type="file" accept=".pdf,.txt" onChange={e => setFile(e.currentTarget.files?.[0] ?? null)} />
+        <input aria-label="Choose PDF or TXT file" type="file" accept=".pdf,.txt" onChange={e => { setFile(e.currentTarget.files?.[0] ?? null); setDocument(null); setAnswer(''); setSources([]); setError(''); }} />
         <button type="submit" disabled={!file || loading}>{loading ? 'Working…' : 'Upload & index'}</button>
       </form>
       {document && <p className="success">Indexed {document.filename} — {document.chunks} searchable chunks</p>}
