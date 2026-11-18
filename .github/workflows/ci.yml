@@ -13,6 +13,8 @@ jobs:
           python-version: '3.12'
       - run: pip install -r backend/requirements.txt httpx
       - run: python -m pytest -q backend/tests
+        env:
+          PYTHONPATH: backend
   frontend:
     runs-on: ubuntu-latest
     steps:
