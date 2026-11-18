@@ -70,7 +70,7 @@ app.add_middleware(
 
 class AskRequest(BaseModel):
     question: str = Field(min_length=2, max_length=1000)
-    document_id: UUID | None = None
+    document_id: UUID
 
 
 class Source(BaseModel):
@@ -155,10 +155,10 @@ def ask(request: AskRequest):
             cur.execute("""
                 SELECT d.filename,c.chunk_index,c.content
                 FROM chunks c JOIN documents d ON d.id=c.document_id
-                WHERE (%s::uuid IS NULL OR d.id = %s::uuid)
+                WHERE d.id = %s::uuid
                 ORDER BY c.embedding <=> %s::vector
                 LIMIT 4
-            """, (request.document_id, request.document_id, query_vector))
+            """, (request.document_id, query_vector))
             rows = cur.fetchall()
     if not rows:
         return AskResponse(answer="Please upload a document first.", sources=[])
