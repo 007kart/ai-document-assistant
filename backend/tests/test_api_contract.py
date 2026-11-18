@@ -16,8 +16,8 @@ def test_reject_unsupported_upload():
     assert response.status_code == 415
 
 
-def test_reject_missing_document_id():
-    response = client.post("/chat", json={"question": "What is the main finding?"})
+def test_reject_blank_question():
+    response = client.post("/chat", json={"question": " "})
     assert response.status_code == 422
 
 
